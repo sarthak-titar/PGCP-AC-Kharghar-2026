@@ -50,7 +50,7 @@ class square extends Rectangle{
 	
 }
 
-public class que1{
+public class question3{
 	public static void  main(String[] args) {
 		System.out.println("Enter the side of square ,and length ,breadth of rectangle :");
 		int s = input.intputg();
