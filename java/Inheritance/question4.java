@@ -6,7 +6,7 @@ package inheritance4;
 //"Square is a rectangle". Now call the method of 'Shape' and 'Rectangle' class by the
 //object of 'Square' class.
 
-public class Shape {
+public class question4 {
 		public static void main(String[] args) {
 			square s = new square();
 			s.show1();
