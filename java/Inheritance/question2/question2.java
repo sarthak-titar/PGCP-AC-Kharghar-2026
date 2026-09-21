@@ -91,7 +91,7 @@ package inheritance2;
 	 
  }
 
-public class Member {
+public class question2 {
 	public static void main(String[] args) {
 		PrimeMembers p =new PrimeMembers();
 	
