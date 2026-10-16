@@ -1,0 +1,410 @@
+-- Q1:Create a stored procedure check_even_odd that accepts an integer and displays whether the number is Even or Odd.
+
+mysql> delimiter //
+mysql> create procedure check_even_odd(in num int)
+    -> begin
+    -> if num%2=0 then
+    -> select 'even number' as messege;
+    -> else
+    -> select 'odd number' as messege;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> delimiter ;
+mysql> call check_even_odd(2);
++-------------+
+| messege     |
++-------------+
+| even number |
++-------------+
+1 row in set (0.05 sec)
+
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> call check_even_odd(3);
++------------+
+| messege    |
++------------+
+| odd number |
++------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> delimiter //
+mysql> create procedure calculate_intrest(in principal int,in rate int,in time int)
+    -> begin
+    -> declare result int;
+    -> set result=
+    -> (principal*time*rate)/100;
+    -> select result as msg;
+    -> end //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+mysql> call calculate_intrest(10000,5,2);
++------+
+| msg  |
++------+
+| 1000 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> call calculate_intrest(25000,7,3);
++------+
+| msg  |
++------+
+| 5250 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+-- Q2:Create a stored procedure calculate_interest that accepts principal amount, rate of interest, and time in years and calculates Simple Interest. 
+
+
+mysql> delimiter //
+mysql> create procedure calculate_intrest(in principal int,in rate int,in time int)
+    -> begin
+    -> declare result int;
+    -> set result=
+    -> (principal*time*rate)/100;
+    -> select result as msg;
+    -> end //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> delimiter ;
+mysql> call calculate_intrest(10000,5,2);
++------+
+| msg  |
++------+
+| 1000 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> call calculate_intrest(25000,7,3);
++------+
+| msg  |
++------+
+| 5250 |
++------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+
+
+
+
+
+
+-- Q3:Create a stored procedure calculate_grade that accepts student ID, student name, and marks and displays the student's grade. 
+
+mysql> delimiter //
+mysql> create procedure calculate_grade (in std_id int, in std_name varchar(50),in marks int)
+    -> begin
+    -> if marks between 90 and 100 then
+    -> select std_id , std_name ,marks,'A+' as grade;
+    -> elseif marks between 80 and 89 then
+    -> select std_id , std_name ,marks,'A' as grade;
+    -> elseif marks between 70 and 79 then
+    -> select std_id , std_name ,marks,'B' as grade;
+    -> elseif marks between 60 and 69 then
+    -> select std_id , std_name ,marks,'C' as grade;
+    -> elseif marks between 50 and 59 then
+    -> select std_id , std_name ,marks,'D' as grade;
+    -> else
+    -> select std_id , std_name ,marks,'F' as grade;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> delimiter ;
+mysql> call claculate_grade(101,'Amit',85);
+ERROR 1305 (42000): PROCEDURE procedureass.claculate_grade does not exist
+mysql> call calculate_grade(101,'Amit',85);
++--------+----------+-------+-------+
+| std_id | std_name | marks | grade |
++--------+----------+-------+-------+
+|    101 | Amit     |    85 | A     |
++--------+----------+-------+-------+
+1 row in set (0.04 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> CALL calculate_grade(102, 'Priya', 72);
++--------+----------+-------+-------+
+| std_id | std_name | marks | grade |
++--------+----------+-------+-------+
+|    102 | Priya    |    72 | B     |
++--------+----------+-------+-------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL calculate_grade(103, 'Rahul', 45);
++--------+----------+-------+-------+
+| std_id | std_name | marks | grade |
++--------+----------+-------+-------+
+|    103 | Rahul    |    45 | F     |
++--------+----------+-------+-------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+-- Q4:Create a stored procedure calculate_bonus that accepts employee name and salary and calculates the bonus according to the following rules.
+-- Display employee name, salary, bonus percentage, bonus amount, and total salary. 
+
+
+mysql> delimiter //
+mysql> create procedure calculate_bonus(in emp_name varchar(50), in emp_salary int)
+    -> begin
+    ->     if emp_salary >= 100000 then
+    ->         select emp_name as name, emp_salary as salary, '20%' as bonuspercentage,
+    ->                (emp_salary * 20)/100 as bonusamount,
+    ->                (emp_salary + (emp_salary * 20)/100) as TotalSalary;
+    ->
+    ->     elseif emp_salary >= 50000 then
+    ->         select emp_name as name, emp_salary as salary, '15%' as bonuspercentage,
+    ->                (emp_salary * 15)/100 as bonusamount,
+    ->                (emp_salary + (emp_salary * 15)/100) as TotalSalary;
+    ->
+    ->     elseif emp_salary >= 30000 then
+    ->         select emp_name as name, emp_salary as salary, '10%' as bonuspercentage,
+    ->                (emp_salary * 10)/100 as bonusamount,
+    ->                (emp_salary + (emp_salary * 10)/100) as TotalSalary;
+    ->
+    ->     else
+    ->         select emp_name as name, emp_salary as salary, '5%' as bonuspercentage,
+    ->                (emp_salary * 5)/100 as bonusamount,
+    ->                (emp_salary + (emp_salary * 5)/100) as TotalSalary;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> delimiter ;
+mysql> CALL calculate_bonus('Amit', 120000);
++------+--------+-----------------+-------------+-------------+
+| name | salary | bonuspercentage | bonusamount | TotalSalary |
++------+--------+-----------------+-------------+-------------+
+| Amit | 120000 | 20%             |  24000.0000 | 144000.0000 |
++------+--------+-----------------+-------------+-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL calculate_bonus('Priya', 65000);
++-------+--------+-----------------+-------------+-------------+
+| name  | salary | bonuspercentage | bonusamount | TotalSalary |
++-------+--------+-----------------+-------------+-------------+
+| Priya |  65000 | 15%             |   9750.0000 |  74750.0000 |
++-------+--------+-----------------+-------------+-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL calculate_bonus('Rahul', 25000);
++-------+--------+-----------------+-------------+-------------+
+| name  | salary | bonuspercentage | bonusamount | TotalSalary |
++-------+--------+-----------------+-------------+-------------+
+| Rahul |  25000 | 5%              |   1250.0000 |  26250.0000 |
++-------+--------+-----------------+-------------+-------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+
+-- Q5 :Create a stored procedure find_maximum that accepts three integers and displays the largest number. 
+
+mysql> delimiter //
+mysql> create procedure  find_maximum(in num1 int,in num2 int ,in num3 int)
+    -> begin
+    -> if num1 >= num2 and num1 >= num3
+    -> then
+    -> select concat(num1 , 'is largest number!');
+    -> elseif num2 >= num3 and num2 >= num1
+    -> then
+    -> select concat(num2 , 'is largest number!');
+    -> else
+    -> select concat(num3 , 'is largest number!');
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> delimiter ;
+mysql> CALL find_maximum(25, 78, 45);
++-------------------------------------+
+| concat(num2 , 'is largest number!') |
++-------------------------------------+
+| 78is largest number!                |
++-------------------------------------+
+1 row in set (0.04 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> CALL find_maximum(100, 50, 75);
++-------------------------------------+
+| concat(num1 , 'is largest number!') |
++-------------------------------------+
+| 100is largest number!               |
++-------------------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL find_maximum(30, 30, 20);
++-------------------------------------+
+| concat(num1 , 'is largest number!') |
++-------------------------------------+
+| 30is largest number!                |
++-------------------------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+-- Q6Create a stored procedure salary_analysis that accepts employee name and salary.
+-- Determine the salary category and allowance, then calculate the final salary.
+-- Display employee name, salary, category, allowance percentage, allowance amount, and final salary. 
+
+mysql> delimiter //
+mysql>
+mysql> create procedure salary_analysis(in emp_name varchar(100), in salary int)
+    -> begin
+    ->  if salary >= 100000 then
+    ->         select emp_name as name, salary as salary, 'HiGH' as category, '20%' as Allowancepercentage,
+    ->                (salary * 20) / 100 as allowance_amount,
+    ->                (salary + (salary * 20) / 100) as total_salary;
+    ->     elseif salary >= 50000 then
+    ->         select emp_name as name, salary as salary, 'MEDIUM' as category, '15%' as Allowancepercentage,
+    ->                (salary * 15) / 100 as allowance_amount,
+    ->                (salary + (salary * 15) / 100) as total_salary;
+    ->     else
+    ->         select emp_name as name, salary as salary, 'LOW' as category, '10%' as Allowancepercentage,
+    ->                (salary * 10) / 100 as allowance_amount,
+    ->                (salary + (salary * 10) / 100) as total_salary;
+    ->     end if;
+    -> end //
+Query OK, 0 rows affected (0.05 sec)
+
+mysql>
+mysql> delimiter ;
+mysql> CALL salary_analysis('Amit', 120000);
++------+--------+----------+---------------------+------------------+--------------+
+| name | salary | category | Allowancepercentage | allowance_amount | total_salary |
++------+--------+----------+---------------------+------------------+--------------+
+| Amit | 120000 | HiGH     | 20%                 |       24000.0000 |  144000.0000 |
++------+--------+----------+---------------------+------------------+--------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL salary_analysis('Priya', 60000);
++-------+--------+----------+---------------------+------------------+--------------+
+| name  | salary | category | Allowancepercentage | allowance_amount | total_salary |
++-------+--------+----------+---------------------+------------------+--------------+
+| Priya |  60000 | MEDIUM   | 15%                 |        9000.0000 |   69000.0000 |
++-------+--------+----------+---------------------+------------------+--------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CALL salary_analysis('Rahul', 35000);
++-------+--------+----------+---------------------+------------------+--------------+
+| name  | salary | category | Allowancepercentage | allowance_amount | total_salary |
++-------+--------+----------+---------------------+------------------+--------------+
+| Rahul |  35000 | LOW      | 10%                 |        3500.0000 |   38500.0000 |
++-------+--------+----------+---------------------+------------------+--------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+
+-- Q7:Create a stored procedure calculate_electricity_bill that accepts consumer name and units consumed.
+--  Calculate the electricity bill using the slab-wise rates below. 
+-- Display consumer name, units consumed, and total bill amount. 
+
+mysql> DELIMITER //
+mysql>
+mysql> CREATE PROCEDURE calculate_electricity_bill(
+    ->     IN name VARCHAR(100),
+    ->     IN unit INT
+    -> )
+    -> BEGIN
+    ->
+    ->     IF unit <= 100 THEN
+    ->
+    ->         SELECT name, unit, (unit * 2) AS total_bill;
+    ->
+    ->     ELSEIF unit <= 200 THEN
+    ->
+    ->         SELECT name, unit,
+    ->                (100 * 2) + ((unit - 100) * 3) AS total_bill;
+    ->
+    ->     ELSEIF unit <= 400 THEN
+    ->
+    ->         SELECT name, unit,
+    ->                (100 * 2) + (100 * 3) + ((unit - 200) * 5) AS total_bill;
+    ->
+    ->     ELSE
+    ->
+    ->         SELECT name, unit,
+    ->                (100 * 2) + (100 * 3) + (200 * 5)
+    ->                + ((unit - 400) * 7) AS total_bill;
+    ->
+    ->     END IF;
+    ->
+    -> END //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> DELIMITER ;
+mysql> CALL calculate_electricity_bill('Amit', 80);
++------+------+------------+
+| name | unit | total_bill |
++------+------+------------+
+| Amit |   80 |        160 |
++------+------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL calculate_electricity_bill('Priya', 150);
++-------+------+------------+
+| name  | unit | total_bill |
++-------+------+------------+
+| Priya |  150 |        350 |
++-------+------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL calculate_electricity_bill('Rahul', 350);
++-------+------+------------+
+| name  | unit | total_bill |
++-------+------+------------+
+| Rahul |  350 |       1250 |
++-------+------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL calculate_electricity_bill('Sneha', 500);
++-------+------+------------+
+| name  | unit | total_bill |
++-------+------+------------+
+| Sneha |  500 |       2200 |
++-------+------+------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
