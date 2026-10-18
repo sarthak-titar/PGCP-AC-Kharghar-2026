@@ -1,0 +1,260 @@
+create table Employee (emp_id int primary key, 
+name varchar(100),
+department varchar(55),
+salary decimal(12,2)
+ );
+ insert into Employee values 
+ (1,'Amit','IT',50000.0),
+ (2,'Ravi','IT',70000.0),
+ (3,'Neha','IT',70000.0),
+ (4,'Priya','HR',40000.0),
+ (5,'Kiran','HR',60000.0),
+ (6,'Rahul','Sales',45000.0);
+
+-- Q1 Display row numbers for all employees
+mysql> select name , salary,
+    ->    row_number() over () as total_rows
+    ->    from Employee;
++-------+----------+------------+
+| name  | salary   | total_rows |
++-------+----------+------------+
+| Amit  | 50000.00 |          1 |
+| Ravi  | 70000.00 |          2 |
+| Neha  | 70000.00 |          3 |
+| Priya | 40000.00 |          4 |
+| Kiran | 60000.00 |          5 |
+| Rahul | 45000.00 |          6 |
++-------+----------+------------+
+6 rows in set (0.01 sec)
+-- Q2 Find the rank of employees based on salary
+-- Q3 Difference between RANK() and DENSE_RANK()
+mysql> select name , salary ,
+    -> rank () over (order by salary desc) as rankbysalary
+    -> from employee;
++-------+----------+--------------+
+| name  | salary   | rankbysalary |
++-------+----------+--------------+
+| Ravi  | 70000.00 |            1 |
+| Neha  | 70000.00 |            1 |
+| Kiran | 60000.00 |            3 |
+| Amit  | 50000.00 |            4 |
+| Rahul | 45000.00 |            5 |
+| Priya | 40000.00 |            6 |
++-------+----------+--------------+
+6 rows in set (0.00 sec)
+
+mysql>  select name , salary ,
+    -> rank () over (order by salary desc) as rankbysalary,
+    -> dense_rank() over (order by salary desc) as denseranknogap
+    -> from employee;
++-------+----------+--------------+----------------+
+| name  | salary   | rankbysalary | denseranknogap |
++-------+----------+--------------+----------------+
+| Ravi  | 70000.00 |            1 |              1 |
+| Neha  | 70000.00 |            1 |              1 |
+| Kiran | 60000.00 |            3 |              2 |
+| Amit  | 50000.00 |            4 |              3 |
+| Rahul | 45000.00 |            5 |              4 |
+| Priya | 40000.00 |            6 |              5 |
++-------+----------+--------------+----------------+
+6 rows in set (0.00 sec)
+
+
+-- Q4 Find the second-highest salary
+mysql> select *
+    -> from(
+    -> select name , salary,
+    ->   dense_rank () over (order by salary desc) as second_highest
+    ->   from employee) as ss
+    ->   where second_highest = 2;
++-------+----------+----------------+
+| name  | salary   | second_highest |
++-------+----------+----------------+
+| Kiran | 60000.00 |              2 |
++-------+----------+----------------+
+1 row in set (0.00 sec)
+
+
+-- Q5 Find the highest-paid employee in each department
+mysql>  select * from (
+    ->
+    ->   select name, salary ,department,
+    ->   dense_rank () over (partition by department order by salary desc ) topsalary
+    ->   from employee ) as ss
+    ->   where topsalary = 1;
++-------+----------+------------+-----------+
+| name  | salary   | department | topsalary |
++-------+----------+------------+-----------+
+| Kiran | 60000.00 | HR         |         1 |
+| Ravi  | 70000.00 | IT         |         1 |
+| Neha  | 70000.00 | IT         |         1 |
+| Rahul | 45000.00 | Sales      |         1 |
++-------+----------+------------+-----------+
+4 rows in set (0.00 sec)
+
+--Q6. Find the top 2 highest-paid employees in each department
+mysql> select *
+    ->  from (select name , salary, department,
+    ->  dense_rank () over(partition by department order by salary desc) as highest
+    ->  from employee) as temp
+    ->  where highest <= 2;
++-------+----------+------------+---------+
+| name  | salary   | department | highest |
++-------+----------+------------+---------+
+| Kiran | 60000.00 | HR         |       1 |
+| Priya | 40000.00 | HR         |       2 |
+| Ravi  | 70000.00 | IT         |       1 |
+| Neha  | 70000.00 | IT         |       1 |
+| Amit  | 50000.00 | IT         |       2 |
+| Rahul | 45000.00 | Sales      |       1 |
++-------+----------+------------+---------+
+6 rows in set (0.00 sec)
+
+-- Q7. Find the previous employee's salary using LAG()
+mysql> select name , department ,salary,
+    -> lag (salary) over (order by salary desc) as previouss
+    -> from employee;
++-------+------------+----------+-----------+
+| name  | department | salary   | previouss |
++-------+------------+----------+-----------+
+| Ravi  | IT         | 70000.00 |      NULL |
+| Neha  | IT         | 70000.00 |  70000.00 |
+| Kiran | HR         | 60000.00 |  70000.00 |
+| Amit  | IT         | 50000.00 |  60000.00 |
+| Rahul | Sales      | 45000.00 |  50000.00 |
+| Priya | HR         | 40000.00 |  45000.00 |
++-------+------------+----------+-----------+
+6 rows in set (0.01 sec)
+
+
+-- Q8. Find the next employee's salary using LEAD()
+mysql> select name , department ,salary,
+    -> lead (salary) over (order by salary ) as previouss
+    -> from employee;
++-------+------------+----------+-----------+
+| name  | department | salary   | previouss |
++-------+------------+----------+-----------+
+| Priya | HR         | 40000.00 |  45000.00 |
+| Rahul | Sales      | 45000.00 |  50000.00 |
+| Amit  | IT         | 50000.00 |  60000.00 |
+| Kiran | HR         | 60000.00 |  70000.00 |
+| Ravi  | IT         | 70000.00 |  70000.00 |
+| Neha  | IT         | 70000.00 |      NULL |
++-------+------------+----------+-----------+
+6 rows in set (0.00 sec)
+
+
+-- Q9. Calculate the running total of salaries
+mysql> SELECT name, salary,
+    ->        SUM(salary) OVER (
+    ->            ORDER BY emp_id
+    ->        ) AS running_total
+    -> FROM Employee;
++-------+----------+---------------+
+| name  | salary   | running_total |
++-------+----------+---------------+
+| Amit  | 50000.00 |      50000.00 |
+| Ravi  | 70000.00 |     120000.00 |
+| Neha  | 70000.00 |     190000.00 |
+| Priya | 40000.00 |     230000.00 |
+| Kiran | 60000.00 |     290000.00 |
+| Rahul | 45000.00 |     335000.00 |
++-------+----------+---------------+
+6 rows in set (0.00 sec)
+
+
+
+--Q10. Calculate the average salary of each departmentmysql> select name, salary, department,
+    -> avg(salary) over (partition by department) averagesalary
+    -> from employee;
++-------+----------+------------+---------------+
+| name  | salary   | department | averagesalary |
++-------+----------+------------+---------------+
+| Priya | 40000.00 | HR         |  50000.000000 |
+| Kiran | 60000.00 | HR         |  50000.000000 |
+| Amit  | 50000.00 | IT         |  63333.333333 |
+| Ravi  | 70000.00 | IT         |  63333.333333 |
+| Neha  | 70000.00 | IT         |  63333.333333 |
+| Rahul | 45000.00 | Sales      |  45000.000000 |
++-------+----------+------------+---------------+
+6 rows in set (0.00 sec)
+
+
+
+--Find the difference between an employee's salary and the department average
+mysql> select name, salary, department,
+    -> avg(salary) over (partition by department) averagesalary
+    -> from employee;
++-------+----------+------------+---------------+
+| name  | salary   | department | averagesalary |
++-------+----------+------------+---------------+
+| Priya | 40000.00 | HR         |  50000.000000 |
+| Kiran | 60000.00 | HR         |  50000.000000 |
+| Amit  | 50000.00 | IT         |  63333.333333 |
+| Ravi  | 70000.00 | IT         |  63333.333333 |
+| Neha  | 70000.00 | IT         |  63333.333333 |
+| Rahul | 45000.00 | Sales      |  45000.000000 |
++-------+----------+------------+---------------+
+6 rows in set (0.00 sec)
+
+
+-- Q12. Divide employees into 3 salary groups using NTILE()
+mysql> select name , emp_id ,salary,
+    -> ntile(3) over (order by salary desc ) as ff
+    -> from employee;
++-------+--------+----------+----+
+| name  | emp_id | salary   | ff |
++-------+--------+----------+----+
+| Ravi  |      2 | 70000.00 |  1 |
+| Neha  |      3 | 70000.00 |  1 |
+| Kiran |      5 | 60000.00 |  2 |
+| Amit  |      1 | 50000.00 |  2 |
+| Rahul |      6 | 45000.00 |  3 |
+| Priya |      4 | 40000.00 |  3 |
++-------+--------+----------+----+
+6 rows in set (0.00 sec)
+
+
+--Q13. Find the first salary in the ordered window
+mysql> SELECT name, salary,
+    ->        FIRST_VALUE(salary) OVER (
+    ->            partition by department
+    ->             ORDER BY salary DESC
+    ->
+    ->        ) AS highest_salary
+    -> FROM Employee;
++-------+----------+----------------+
+| name  | salary   | highest_salary |
++-------+----------+----------------+
+| Kiran | 60000.00 |       60000.00 |
+| Priya | 40000.00 |       60000.00 |
+| Ravi  | 70000.00 |       70000.00 |
+| Neha  | 70000.00 |       70000.00 |
+| Amit  | 50000.00 |       70000.00 |
+| Rahul | 45000.00 |       45000.00 |
++-------+----------+----------------+
+6 rows in set (0.00 sec)
+
+
+--Q15. Count employees in each department without grouping rows
+
+mysql> select name, emp_id , department, salary,
+    -> count(*) over (partition by department) as dd
+    -> from employee;
++-------+--------+------------+----------+----+
+| name  | emp_id | department | salary   | dd |
++-------+--------+------------+----------+----+
+| Priya |      4 | HR         | 40000.00 |  2 |
+| Kiran |      5 | HR         | 60000.00 |  2 |
+| Amit  |      1 | IT         | 50000.00 |  3 |
+| Ravi  |      2 | IT         | 70000.00 |  3 |
+| Neha  |      3 | IT         | 70000.00 |  3 |
+| Rahul |      6 | Sales      | 45000.00 |  1 |
++-------+--------+------------+----------+----+
+6 rows in set (0.00 sec)
+
+
+
+
+
+
