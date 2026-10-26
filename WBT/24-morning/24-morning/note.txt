@@ -1,0 +1,57 @@
+If you remove the setTimeout function, the code changes from asynchronous (non-blocking) to synchronous (blocking).
+Here is the exact comparison of what happens, why the behavior changes, and why we actually need setTimeout in real-world programming.
+
+1. The Code Comparison
+
+
+If you remove setTimeout, the code looks like this:
+
+javascript
+console.log("starting sum ....");
+let x = 12; let y = 13; let z = x + y;
+console.log("sum of two num is", z);
+
+console.log("starting facto ...");
+let n = 5; let fact = 1;
+for(let i = 1 ; i <= n ; i++){ fact = fact * i; }
+console.log("factorial is ", fact);
+
+console.log("staring square of num ..");
+let num = 3; let squ = num * num;
+console.log(squ);
+Use code with caution.
+
+How the Output Changes
+
+Because there are no timers, JavaScript executes every single line strictly from top to bottom. It will not move to the next section until the current section is completely finished.
+
+Code WITH setTimeout (Asynchronous)	Code WITHOUT setTimeout (Synchronous)
+Output Order:
+1. starting sum ....
+2. starting facto ...
+3. staring square of num ..
+4. sum of two num is 25
+5. 9
+6. factorial is 120	Output Order:
+1. starting sum ....
+2. sum of two num is 25
+3. starting facto ...
+4. factorial is 120
+5. staring square of num ..
+6. 9
+Speed: Everything starts immediately; results print as they finish.	Speed: Line-by-line. Task 2 cannot start until Task 1 is completely done.
+
+
+2. Why do we use setTimeout (or Asynchronous code)?
+
+In your specific example, calculating 12 + 13 or the square of 3 takes less than a microsecond. JavaScript handles it instantly.
+But in real-world software development, some tasks take a long time. We use asynchronous code (simulated by setTimeout) to prevent a website or application from freezing.
+Here are the primary reasons why we do this:
+• Preventing UI Freezing: JavaScript runs on a single thread (it can only do one thing at a time). If a user clicks a button to download a massive 5GB file, and JavaScript runs it synchronously, the entire webpage will freeze. The user won't even be able to click a "Cancel" button or scroll down the page until the download finishes. setTimeout tells JavaScript: "Work on this in the background, and keep the webpage responsive."
+• Waiting for External Servers: When your app requests data from a database or an external API (like fetching today's weather), that server might take 2 seconds to respond. Asynchronous code allows your app to show a "Loading..." animation while waiting, rather than crashing or freezing.
+• Simulating Real-World Delays: In development, programmers use setTimeout to mimic network lag or delays, allowing them to test how their app handles slow internet connections.
+• Scheduling Future Actions: Sometimes you genuinely just want to delay an action—like showing a "Subscribe to our newsletter" popup only after a user has been on your website for 10 seconds.
+
+Summary
+
+Without setTimeout, JavaScript is like a single-lane road where a broken-down car blocks all traffic behind it. With setTimeout, JavaScript builds a side-lane so slow tasks can pull over, allowing the rest of the traffic to keep moving smoothly.
